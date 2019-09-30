@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="x_product_apr_ecodrip" model="product.product">
+      <field name="name">APR</field>
+      <field name="categ_id" ref="product.product_category_all"/>
+      <field name="standard_price">0.00</field>
+      <field name="list_price">1.00</field>
+      <field name="type">service</field>
+      <field name="sale_ok" eval="False"/>
+      <field name="purchase_ok" eval="False"/>
+      <field name="uom_id" ref="uom.product_uom_unit"/>
+      <field name="uom_po_id" ref="uom.product_uom_unit"/>
+      <field name="default_code">APR</field>
+    </record>
+
+    <!-- payment terms -->
+    <record id="x_account_payment_term_apr_ecodrip" model="account.payment.term">
+      <field name="name">APR: Beginning of Following Month (Demo)</field>
+      <field name="note">APR Payment terms: Beginning of Following Month</field>
+      <field name="line_ids" eval="[(5, 0), (0, 0, {'value': 'balance', 'value_amount': 0.0, 'sequence': 500, 'days': 10, 'option': 'day_following_month'})]"/>
+    </record>
+  </data>
+</odoo>
+

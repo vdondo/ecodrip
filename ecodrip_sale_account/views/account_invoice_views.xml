@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="0">
+    <!-- adding menu item to the invoice view -->
+    <menuitem id="x_menu_run_apr_ecodrip" name="Run APR" action="x_action_run_apr_ecodrip" parent="account.menu_finance_receivables" sequence="500"/>
+
+    <record id="x_view_account_invoice_form_inherit_ecodrip" model="ir.ui.view">
+      <field name="name">account_invoice_form_ecodrip</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_form" />
+      <field name="arch" type="xml">
+	<xpath expr="//field[@name='partner_id']" position="before">
+	  <field name="x_invoice_id" attrs="{'invisible': [('x_invoice_id', '=', False)]}" readonly="True"/>
+	</xpath>
+	<!-- <xpath expr="//field[@name='tax_line_ids']" position="after"> -->
+	<!--     <field name="x_apr_ids" attrs="{'invisible': [('x_apr_ids', '=', False)]}" readonly="True"/> -->
+	<!-- </xpath> -->
+      </field>
+    </record>
+  </data>
+  
+</odoo>

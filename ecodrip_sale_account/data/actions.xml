@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="0">
+    
+    <record id="x_action_run_apr_ecodrip" model="ir.actions.server">
+      <field name="name">Run APR</field>
+      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="state">code</field>
+      <field name="type">ir.actions.server</field>
+      <field name="code"><![CDATA[
+# https://stackoverflow.com/questions/42950/get-last-day-of-the-month-in-python
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)  # this will never fail
+    return next_month - datetime.timedelta(days=next_month.day)
+
+today = datetime.date.today()
+
+# we want open outstanding invoices that are not apr and are not paid yet
+invoices = env['account.invoice'].search([('type', '=', 'out_invoice'), ('state', '=', 'open'), ('x_invoice_id', '=', False), ('date_due', '!=', False), ('date_due', '<', today)])
+
+invoices = invoices.filtered(lambda inv: (inv.x_last_apr_id and inv.x_last_apr_id.date_due < today) or not inv.x_last_apr_id)
+
+if not invoices:
+    raise Warning('No open, past due invoices or aprs.')
+
+for inv in invoices:
+    # since customer is using multi company, we need to make sure apr related settings exist in current invoice company
+    if not inv.company_id.x_apr_payment_term_id or not inv.company_id.x_apr_product_id or (not inv.company_id.x_apr_account_id and not inv.company_id.x_apr_product_id.property_account_income_id):
+        raise Warning('APR product or payment term or account is not set for company: {}.'.format(inv.company_id.display_name))
+    
+    # find the last active invoice, it could be the invoice itself or the last apr of this invoice
+    last_apr_id = inv.x_last_apr_id or inv
+
+    # we want to create all missing APRs, based on the date this action is being run
+    while last_apr_id.date_due < today:
+        # create a new apr with the invoice_date setting to the end of the same month of the current due date
+        new_apr_id = env['account.invoice'].create({'company_id': inv.company_id.id, 'partner_id': inv.partner_id.id, 'type': 'out_invoice', 'x_invoice_id': inv.id, 'payment_term_id': inv.company_id.x_apr_payment_term_id.id, 'date_invoice': last_day_of_month(last_apr_id.date_due)})
+        # explicitly calling payment_term and date_invoice onchange here to calculate date_due
+        new_apr_id._onchange_payment_term_date_invoice()
+        
+        # if this apr is the first apr of the invoice, we know we need to subtract the first n days from the number of days
+        first_day = last_apr_id.date_due if last_apr_id == inv else last_apr_id.date_invoice  # technical first day
+        number_of_days = (new_apr_id.date_invoice - first_day).days
+
+        # this is to show to human since the real first day is one day before
+        display_first_day = first_day + dateutil.relativedelta.relativedelta(days=+1)  
+        
+        new_apr_line_id = env['account.invoice.line'].create({'invoice_id': new_apr_id.id, 'product_id': inv.company_id.x_apr_product_id.id, 'price_unit': inv.residual * (number_of_days/365.0*0.18), 'quantity': 1.00, 'name': inv.company_id.x_apr_product_id.description_sale or 'Finance Charges', 'account_id': inv.company_id.x_apr_product_id.property_account_income_id.id or inv.company_id.x_apr_account_id.id})
+
+        # validate invoice
+        new_apr_id.action_invoice_open()
+        # change the invoice move's name to display APR
+        new_apr_id.move_id.sudo().write({'name': '{}-{}/APR/{:03d}'.format(new_apr_id.move_id.name, inv.number, len(inv.x_apr_ids))})
+        # loop on
+        last_apr_id = new_apr_id
+      ]]></field>
+    </record>
+
+    <record id="x_action_validate_standard_price_smaller_than_price_unit" model="base.automation">
+      <field name="name">Validate product cost is smaller than price on SOL</field>
+      <field name="model_id" ref="sale_stock.model_sale_order"/>
+      <field name="state">code</field>
+      <field name="trigger">on_write</field>
+      <field name="code"><![CDATA[
+for r in records:
+    if r.state == 'sale':
+        for sol in r.order_line:
+            if sol.product_id.standard_price > sol.price_unit and env.ref('sales_team.group_sale_manager') not in env.user.groups_id:
+                raise Warning('Only manager can validate this SO since at least one product is being sold with a price that is lower than its cost.')
+    ]]></field>
+    </record>
+
+  </data>
+</odoo>

@@ -58,23 +58,23 @@
     <!--   <field name="readonly" eval="True"/> -->
     <!-- </record> -->
 
-    <record id="x_field_last_apr_id" model="ir.model.fields">
-      <field name="name">x_last_apr_id_deprecated</field>
-      <field name="field_description">Last APR</field>
-      <field name="model_id" ref="sale_stock.model_account_invoice" />
-      <field name="ttype">many2one</field>
-      <field name="relation">account.invoice</field>
-<!--       <field name="depends">x_apr_ids,x_apr_ids.state,x_apr_ids.date_due</field> -->
-<!--       <field name="compute"> -->
-<!-- 	<![CDATA[ -->
-<!-- for record in self: -->
-<!--     apr_ids = record.x_apr_ids.filtered(lambda apr: apr.state != 'cancel' and apr.date_due) -->
-<!--     record['x_last_apr_id'] = apr_ids.sorted(key=lambda apr: apr.date_due)[-1].id if apr_ids else False -->
-<!-- 	]]> -->
-<!--       </field> -->
-      <field name="store" eval="True"/>
-      <field name="readonly" eval="True"/>
-    </record>
+<!--     <record id="x_field_last_apr_id" model="ir.model.fields"> -->
+<!--       <field name="name">x_last_apr_id_deprecated</field> -->
+<!--       <field name="field_description">Last APR (Deprecated)</field> -->
+<!--       <field name="model_id" ref="sale_stock.model_account_invoice" /> -->
+<!--       <field name="ttype">many2one</field> -->
+<!--       <field name="relation">account.invoice</field> -->
+<!-- <!-\-       <field name="depends">x_apr_ids,x_apr_ids.state,x_apr_ids.date_due</field> -\-> -->
+<!-- <!-\-       <field name="compute"> -\-> -->
+<!-- <!-\- 	<![CDATA[ -\-> -->
+<!-- <!-\- for record in self: -\-> -->
+<!-- <!-\-     apr_ids = record.x_apr_ids.filtered(lambda apr: apr.state != 'cancel' and apr.date_due) -\-> -->
+<!-- <!-\-     record['x_last_apr_id'] = apr_ids.sorted(key=lambda apr: apr.date_due)[-1].id if apr_ids else False -\-> -->
+<!-- <!-\- 	]]> -\-> -->
+<!-- <!-\-       </field> -\-> -->
+<!--       <field name="store" eval="True"/> -->
+<!--       <field name="readonly" eval="True"/> -->
+<!--     </record> -->
 
 
   </data>

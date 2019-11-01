@@ -12,8 +12,8 @@ class AccountInvoice(models.Model):
     x_invoice_id = fields.Many2one('account.invoice', ondelete='set null', string='Main Invoice', readonly=True)
     x_apr_ids = fields.One2many('account.invoice', 'x_invoice_id', string='Related APRs', readonly=True)
     x_apr_count = fields.Integer('# of APRs', readonly=True, compute="_compute_apr_count")
-    x_last_apr_id = fields.Many2one('account.invoice', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
-    x_last_apr_date_due = fields.Date('Last APR Date Due', related='x_last_apr_id.date_due', store=True, readonly=True, compute='_compute_last_apr_id')
+    last_apr_id = fields.Many2one('account.invoice', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
+    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.date_due', store=True, readonly=True, compute='_compute_last_apr_id')
 
     def _compute_apr_count(self):
         for inv in self:
@@ -40,11 +40,11 @@ class AccountInvoice(models.Model):
             if not record.x_invoice_id:
                 apr_ids = record.x_apr_ids.filtered(lambda apr: apr.state != 'cancel' and apr.date_due)
                 # if there is no last apr, then our record is the last apr
-                record.x_last_apr_id = apr_ids.sorted(key=lambda apr: apr.date_due)[-1].id if apr_ids else record.id  
+                record.last_apr_id = apr_ids.sorted(key=lambda apr: apr.date_due)[-1].id if apr_ids else record.id  
             else:
-                record.x_last_apr_id = False
-            if record.x_last_apr_id:
-                record.x_last_apr_date_due = record.x_last_apr_id.date_due
+                record.last_apr_id = False
+            if record.last_apr_id:
+                record.x_last_apr_date_due = record.last_apr_id.date_due
             else:
                 record.x_last_apr_date_due = False
 
@@ -79,7 +79,7 @@ class AccountInvoice(models.Model):
                 raise ValidationError(_('APR product or payment term or account is not set for company: {}.'.format(inv.company_id.display_name)))
     
             # find the last active invoice, it could be the invoice itself or the last apr of this invoice
-            last_apr_id = inv.x_last_apr_id or inv
+            last_apr_id = inv.last_apr_id or inv
 
             # we want to create all missing APRs, based on the date this action is being run
             while last_apr_id.date_due < date:

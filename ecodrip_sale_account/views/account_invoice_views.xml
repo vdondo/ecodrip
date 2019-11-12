@@ -3,12 +3,18 @@
   <data noupdate="0">
     <!-- adding menu item to the invoice view -->
     <menuitem id="x_menu_run_apr_ecodrip" name="Run APR" action="x_action_run_apr_ecodrip" parent="account.menu_finance_receivables" sequence="500"/>
-
+    
     <record id="x_view_account_invoice_form_inherit_ecodrip" model="ir.ui.view">
       <field name="name">account_invoice_form_ecodrip</field>
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_form" />
       <field name="arch" type="xml">
+	<xpath expr="//div[@name='button_box']" position="inside">
+	  <field name="x_apr_count" invisible="1"/>
+	  <button type="object" string="" name="action_open_apr_tree_view" class="oe_stat_button" icon="fa-list" attrs="{'invisible': [('x_apr_count', '=', 0)]}">
+	    <field name="x_apr_count" string="APR" widget="statinfo"/>
+	  </button>
+	</xpath>
 	<xpath expr="//field[@name='partner_id']" position="before">
 	  <field name="x_invoice_id" attrs="{'invisible': [('x_invoice_id', '=', False)]}" readonly="True"/>
 	</xpath>
@@ -17,6 +23,7 @@
 	<!-- </xpath> -->
       </field>
     </record>
+    
   </data>
   
 </odoo>

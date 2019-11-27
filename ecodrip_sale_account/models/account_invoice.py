@@ -112,7 +112,7 @@ class AccountInvoice(models.Model):
 
                 # validate invoice
                 #new_apr_id.action_invoice_open()
-                new_apr_id.action_invoice_open({'state' : 'draft'})
+                new_apr_id.action_invoice_open({'status' : 'draft'})
 
                 # change the invoice move's name to display APR
                 new_apr_id.move_id.sudo().write({'name': '{}-{}/APR/{:03d}'.format(new_apr_id.move_id.name, inv.number, len(inv.x_apr_ids))})

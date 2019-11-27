@@ -13,7 +13,7 @@ class AccountInvoice(models.Model):
     x_apr_ids = fields.One2many('account.invoice', 'x_invoice_id', string='Related APRs', readonly=True)
     x_apr_count = fields.Integer('# of APRs', readonly=True, compute="_compute_apr_count")
     last_apr_id = fields.Many2one('account.invoice', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
-    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.date_due', store=True, readonly=True, compute='_compute_last_apr_id')
+    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.date_due', store=True, readonly=False, compute='_compute_last_apr_id')
 
     def _compute_apr_count(self):
         for inv in self:

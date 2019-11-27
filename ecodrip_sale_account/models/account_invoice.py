@@ -90,7 +90,8 @@ class AccountInvoice(models.Model):
                     'type': 'out_invoice',
                     'x_invoice_id': inv.id,
                     'payment_term_id': inv.company_id.x_apr_payment_term_id.id,
-                    'date_invoice': self.last_day_of_month(last_apr_id.date_due)})
+                    'date_invoice': self.last_day_of_month(last_apr_id.date_due),
+                    'status': 'draft'})
 
                 # explicitly calling payment_term and date_invoice onchange here to calculate date_due
                 new_apr_id._onchange_payment_term_date_invoice()
@@ -111,9 +112,7 @@ class AccountInvoice(models.Model):
                     'account_id': inv.company_id.x_apr_product_id.property_account_income_id.id or inv.company_id.x_apr_account_id.id})
 
                 # validate invoice
-                #new_apr_id.action_invoice_open()
-                new_apr_id.action_invoice_open({'status' : 'draft'})
-
+                new_apr_id.action_invoice_open()
                 # change the invoice move's name to display APR
                 new_apr_id.move_id.sudo().write({'name': '{}-{}/APR/{:03d}'.format(new_apr_id.move_id.name, inv.number, len(inv.x_apr_ids))})
                 # loop on

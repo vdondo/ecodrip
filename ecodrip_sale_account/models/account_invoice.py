@@ -82,7 +82,7 @@ class AccountInvoice(models.Model):
             last_apr_id = inv.last_apr_id or inv
 
             # we want to create all missing APRs, based on the date this action is being run
-            while last_apr_id.date_due < date:
+            # while last_apr_id.date_due < date:
                 # create a new apr with the invoice_date setting to the end of the same month of the current due date
                 new_apr_id = self.env['account.invoice'].create({
                     'company_id': inv.company_id.id,

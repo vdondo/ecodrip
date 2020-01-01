@@ -111,7 +111,7 @@ class AccountInvoice(models.Model):
                     'account_id': inv.company_id.x_apr_product_id.property_account_income_id.id or inv.company_id.x_apr_account_id.id})
 
                 # validate invoice
-                # new_apr_id.action_invoice_open()
+                new_apr_id.action_invoice_open()
                 # change the invoice move's name to display APR
                 new_apr_id.move_id.sudo().write({'name': '{}-{}/APR/{:03d}'.format(new_apr_id.move_id.name, inv.number, len(inv.x_apr_ids))})
                 # loop on

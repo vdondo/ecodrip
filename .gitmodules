@@ -7,3 +7,8 @@
 	path = OCA/l10n-usa
 	url = git@github.com:OCA/l10n-usa.git
 	branch = 12.0
+
+[submodule "OCA/commission"]
+	path = OCA/commission
+	url = git@github.com:OCA/commission.git
+	branch = 12.0

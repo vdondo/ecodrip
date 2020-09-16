@@ -7,3 +7,8 @@
 	path = OCA/l10n-usa
 	url = git@github.com:OCA/l10n-usa.git
 	branch = 12.0
+
+[submodule "OCA/sale-workflow"]
+	path = OCA/sale-workflow
+	url = git@github.com:OCA/sale-workflow.git
+	branch = 12.0

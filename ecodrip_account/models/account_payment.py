@@ -2,7 +2,6 @@
 
 from odoo import api, fields, models
 from odoo.tools.misc import formatLang
-from odoo.tools.misc import formatLang
 
 
 class AccountPayment(models.Model):

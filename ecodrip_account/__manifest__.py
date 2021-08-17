@@ -17,6 +17,7 @@
     # any module necessary for this one to work correctly
     'depends': ['account', 'l10n_us_check_printing'],
     'data': [
+        'views/account_invoice_views.xml',
         'views/print_check.xml',
         'views/res_config_settings_views.xml',
     ],

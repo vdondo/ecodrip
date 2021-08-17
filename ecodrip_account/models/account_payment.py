@@ -15,10 +15,11 @@ class AccountPayment(models.Model):
     def _check_make_stub_line(self, invoice):
         stub_line = super(AccountPayment, self)._check_make_stub_line(invoice)
         if invoice.state == 'paid' and invoice.type == 'in_invoice':
-            total_paid = 0
-            for payment in invoice.payment_ids:
-                total_paid += payment.amount
-            discount = invoice.amount_total - total_paid
+            last_payment_date = max([payment_date for payment_date in invoice.payment_ids.mapped('payment_date') if payment_date], default=None)
+            if last_payment_date and self.payment_date == last_payment_date and self.payment_date <= invoice.early_payment_deadline:
+                discount = invoice.early_payment_discount
+            else:
+                discount = 0
             invoice_payment_reconcile = invoice.move_id.line_ids.mapped('matched_debit_ids').filtered(lambda r: r.debit_move_id in self.move_line_ids)
 
             if self.currency_id != self.journal_id.company_id.currency_id:

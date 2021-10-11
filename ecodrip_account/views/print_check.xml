@@ -14,6 +14,10 @@
     </template>
 
     <template id="ckus_stub_inherit_ecodrip" inherit_id="l10n_us_check_printing.ckus_stub">
+        <xpath expr="//tbody//tr" position="before">
+            <t t-set="any_discount_taken" t-value="any(line['discount'] for line in page['stub_lines'])"/>
+        </xpath>
+
         <xpath expr="//thead//th[2]" position="replace">
             <th>
                 <span>Memo</span>
@@ -27,13 +31,13 @@
         </xpath>
 
         <xpath expr="//thead//th[4]" position="after">
-            <th>
+            <th t-if="any_discount_taken">
                 <span>Discount Taken</span>
             </th>
         </xpath>
 
         <xpath expr="//tbody//td[4]" position="after">
-            <td>
+            <td t-if="any_discount_taken">
                 <t t-esc="stub_line['discount']" t-options="{'widget': 'monetary', 'display_currency': stub_line['currency']}"/>
             </td>
         </xpath>

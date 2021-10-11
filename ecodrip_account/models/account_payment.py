@@ -16,7 +16,7 @@ class AccountPayment(models.Model):
         stub_line = super(AccountPayment, self)._check_make_stub_line(invoice)
         if invoice.state == 'paid' and invoice.type == 'in_invoice':
             last_payment_date = max([payment_date for payment_date in invoice.payment_ids.mapped('payment_date') if payment_date], default=None)
-            if last_payment_date and self.payment_date == last_payment_date and self.payment_date <= invoice.early_payment_deadline:
+            if last_payment_date and invoice.early_payment_deadline and self.payment_date == last_payment_date and self.payment_date <= invoice.early_payment_deadline:
                 discount = invoice.early_payment_discount
             else:
                 discount = 0

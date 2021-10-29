@@ -8,7 +8,6 @@
 
     <template id="ckus_check_inherit_ecodrip" inherit_id="l10n_us_check_printing.ckus_check">
         <xpath expr="//div[hasclass('ckus_memo')]" position="after">
-            Signature:
             <img class="ckus_signature" t-att-src="image_data_uri(page['company'].account_check_signature_image)"/>
         </xpath>
     </template>

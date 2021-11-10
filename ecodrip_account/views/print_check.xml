@@ -14,7 +14,7 @@
 
     <template id="ckus_stub_inherit_ecodrip" inherit_id="l10n_us_check_printing.ckus_stub">
         <xpath expr="//table" position="before">
-            <t t-set="any_discount_taken" t-value="any(line['discount'] for line in page['stub_lines'])"/>
+            <t t-set="any_discount_taken" t-value="page['stub_lines'] and any(line['discount'] for line in page['stub_lines'])"/>
         </xpath>
 
         <xpath expr="//thead//th[2]" position="replace">

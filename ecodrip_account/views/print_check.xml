@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="assets_common" name="ecodrip_account pdf assets" inherit_id="web.report_assets_common">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/scss" href="/ecodrip_account/static/src/sass/report_check_signature.scss"/>
+        </xpath>
+    </template>
+
+    <template id="ckus_check_inherit_ecodrip" inherit_id="l10n_us_check_printing.ckus_check">
+        <xpath expr="//div[hasclass('ckus_memo')]" position="after">
+            <img class="ckus_signature" t-att-src="image_data_uri(page['company'].account_check_signature_image)" t-if="page['company'].account_check_signature_image"/>
+        </xpath>
+    </template>
+
+    <template id="ckus_stub_inherit_ecodrip" inherit_id="l10n_us_check_printing.ckus_stub">
+        <xpath expr="//table" position="before">
+            <t t-set="any_discount_taken" t-value="page['stub_lines'] and any(line['discount'] for line in page['stub_lines'])"/>
+        </xpath>
+
+        <xpath expr="//thead//th[2]" position="replace">
+            <th>
+                <span>Memo</span>
+            </th>
+        </xpath>
+
+        <xpath expr="//tbody//td[2]" position="replace">
+            <td>
+                <t t-esc="stub_line['memo']"/>
+            </td>
+        </xpath>
+
+        <xpath expr="//thead//th[4]" position="after">
+            <th t-if="any_discount_taken">
+                <span>Discount Taken</span>
+            </th>
+        </xpath>
+
+        <xpath expr="//tbody//td[4]" position="after">
+            <td t-if="any_discount_taken">
+                <t t-esc="stub_line['discount']" t-options="{'widget': 'monetary', 'display_currency': stub_line['currency']}"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>

@@ -4,7 +4,7 @@
     
     <record id="x_action_run_apr_ecodrip" model="ir.actions.server">
       <field name="name">Run APR</field>
-      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="model_id" ref="account.model_account_move"/>
       <field name="state">code</field>
       <field name="type">ir.actions.server</field>
       <field name="code"><![CDATA[
@@ -14,10 +14,10 @@ model.action_generate_apr(batch_size=50)
 
     <record id="x_action_run_apr_manual_ecodrip" model="ir.actions.server">
       <field name="name">Run APR on Selected Invoices</field>
-      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="model_id" ref="account.model_account_move"/>
       <field name="state">code</field>
       <field name="type">ir.actions.server</field>
-      <field name="binding_model_id" ref="account.model_account_invoice"/>
+      <field name="binding_model_id" ref="account.model_account_move"/>
       <field name="binding_type">action</field>
       <field name="code"><![CDATA[
 records.generate_apr()

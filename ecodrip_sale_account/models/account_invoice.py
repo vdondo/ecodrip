@@ -6,14 +6,14 @@ from odoo.exceptions import UserError, ValidationError
 import datetime, dateutil
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
     # migrate some of the fields from data files here
-    x_invoice_id = fields.Many2one('account.invoice', ondelete='set null', string='Main Invoice', readonly=True)
-    x_apr_ids = fields.One2many('account.invoice', 'x_invoice_id', string='Related APRs', readonly=True)
+    x_invoice_id = fields.Many2one('account.move', ondelete='set null', string='Main Invoice', readonly=True)
+    x_apr_ids = fields.One2many('account.move', 'x_invoice_id', string='Related APRs', readonly=True)
     x_apr_count = fields.Integer('# of APRs', readonly=True, compute="_compute_apr_count")
-    last_apr_id = fields.Many2one('account.invoice', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
-    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.date_due', store=True, readonly=True, compute='_compute_last_apr_id')
+    last_apr_id = fields.Many2one('account.move', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
+    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.invoice_date_due', store=True, readonly=True, compute='_compute_last_apr_id')
 
     def _compute_apr_count(self):
         for inv in self:
@@ -34,17 +34,17 @@ class AccountInvoice(models.Model):
 
         return action_data
     
-    @api.depends('x_apr_ids', 'x_apr_ids.state', 'x_apr_ids.date_due')
+    @api.depends('x_apr_ids', 'x_apr_ids.state', 'x_apr_ids.invoice_date_due')
     def _compute_last_apr_id(self):
         for record in self:
             if not record.x_invoice_id:
-                apr_ids = record.x_apr_ids.filtered(lambda apr: apr.state != 'cancel' and apr.date_due)
+                apr_ids = record.x_apr_ids.filtered(lambda apr: apr.state != 'cancel' and apr.invoice_date_due)
                 # if there is no last apr, then our record is the last apr
-                record.last_apr_id = apr_ids.sorted(key=lambda apr: apr.date_due)[-1].id if apr_ids else record.id  
+                record.last_apr_id = apr_ids.sorted(key=lambda apr: apr.invoice_date_due)[-1].id if apr_ids else record.id
             else:
                 record.last_apr_id = False
             if record.last_apr_id:
-                record.x_last_apr_date_due = record.last_apr_id.date_due
+                record.x_last_apr_date_due = record.last_apr_id.invoice_date_due
             else:
                 record.x_last_apr_date_due = False
 
@@ -57,7 +57,7 @@ class AccountInvoice(models.Model):
         if not date:
             date = datetime.date.today()
             
-        invoices = self.env['account.invoice'].search([('type', '=', 'out_invoice'), ('state', '=', 'open'), ('x_invoice_id', '=', False), ('x_last_apr_date_due', '!=', False), ('x_last_apr_date_due', '<', date)], limit=batch_size)
+        invoices = self.env['account.move'].search([('type', '=', 'out_invoice'), ('state', '=', 'open'), ('x_invoice_id', '=', False), ('x_last_apr_date_due', '!=', False), ('x_last_apr_date_due', '<', date)], limit=batch_size)
 
         invoices.generate_apr(date=date, safe=True)
     
@@ -82,27 +82,27 @@ class AccountInvoice(models.Model):
             last_apr_id = inv.last_apr_id or inv
 
             # we want to create all missing APRs, based on the date this action is being run
-            while last_apr_id.date_due < date:
+            while last_apr_id.invoice_date_due < date:
                 # create a new apr with the invoice_date setting to the end of the same month of the current due date
-                new_apr_id = self.env['account.invoice'].create({
+                new_apr_id = self.env['account.move'].create({
                     'company_id': inv.company_id.id,
                     'partner_id': inv.partner_id.id,
                     'type': 'out_invoice',
                     'x_invoice_id': inv.id,
                     'payment_term_id': inv.company_id.x_apr_payment_term_id.id,
-                    'date_invoice': self.last_day_of_month(last_apr_id.date_due)})
+                    'date_invoice': self.last_day_of_month(last_apr_id.invoice_date_due)})
 
                 # explicitly calling payment_term and date_invoice onchange here to calculate date_due
                 new_apr_id._onchange_payment_term_date_invoice()
         
                 # if this apr is the first apr of the invoice, we know we need to subtract the first n days from the number of days
-                first_day = last_apr_id.date_due if last_apr_id == inv else last_apr_id.date_invoice  # technical first day
+                first_day = last_apr_id.invoice_date_due if last_apr_id == inv else last_apr_id.date_invoice  # technical first day
                 number_of_days = (new_apr_id.date_invoice - first_day).days
 
                 # this is to show to human since the real first day is one day before
                 display_first_day = first_day + dateutil.relativedelta.relativedelta(days=+1)  
         
-                new_apr_line_id = self.env['account.invoice.line'].create({
+                new_apr_line_id = self.env['account.move.line'].create({
                     'invoice_id': new_apr_id.id,
                     'product_id': inv.company_id.x_apr_product_id.id,
                     'price_unit': inv.residual * (number_of_days/365.0*0.18),

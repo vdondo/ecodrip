@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="assets_common" name="ecodrip_account pdf assets" inherit_id="web.report_assets_common">
+    <template id="report_assets_common" name="ecodrip_account pdf assets" inherit_id="web.report_assets_common">
         <xpath expr="." position="inside">
             <link rel="stylesheet" type="text/scss" href="/ecodrip_account/static/src/sass/report_check_signature.scss"/>
         </xpath>

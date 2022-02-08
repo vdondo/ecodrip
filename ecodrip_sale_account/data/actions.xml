@@ -4,7 +4,7 @@
     
     <record id="x_action_run_apr_ecodrip" model="ir.actions.server">
       <field name="name">Run APR</field>
-      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="model_id" ref="account.model_account_move"/>
       <field name="state">code</field>
       <field name="type">ir.actions.server</field>
       <field name="code"><![CDATA[
@@ -13,18 +13,18 @@ model.action_generate_apr(batch_size=50)
     </record>
 
     <record id="x_action_run_apr_manual_ecodrip" model="ir.actions.server">
-      <field name="name">Run APR on Selected Invoices</field>
-      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="name">Run APR on Selected moves</field>
+      <field name="model_id" ref="account.model_account_move"/>
       <field name="state">code</field>
       <field name="type">ir.actions.server</field>
-      <field name="binding_model_id" ref="account.model_account_invoice"/>
+      <field name="binding_model_id" ref="account.model_account_move"/>
       <field name="binding_type">action</field>
       <field name="code"><![CDATA[
 records.generate_apr()
       ]]></field>
     </record>
 
-    <record id="x_action_validate_standard_price_smaller_than_price_unit" model="base.automation">
+    <!-- <record id="x_action_validate_standard_price_smaller_than_price_unit" model="base.automation">
       <field name="name">Validate product cost is smaller than price on SOL</field>
       <field name="model_id" ref="sale_stock.model_sale_order"/>
       <field name="state">code</field>
@@ -36,7 +36,7 @@ for r in records:
             if sol.product_id.standard_price > sol.price_unit and env.ref('sales_team.group_sale_manager') not in env.user.groups_id:
                 raise Warning('Only manager can validate this SO since at least one product is being sold with a price that is lower than its cost.')
     ]]></field>
-    </record>
+    </record> -->
 
   </data>
 </odoo>

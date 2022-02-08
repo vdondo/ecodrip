@@ -31,12 +31,11 @@ b. Button should appear in “Customer” menu in Accounting application See att
     'license': 'OEEL-1',
     'author': 'Odoo Inc',
     'version': '0.1',
-    'depends': ['sale_management', 'account', 'sale_stock', 'base_automation'],
+    'depends': ['sale_management', 'account_accountant', 'sale_stock', 'base_automation'],
     'data': [
         'data/data.xml',
-        'data/fields.xml',
         'data/actions.xml',
         'views/res_company_views.xml',
-        'views/account_invoice_views.xml'
+        'views/account_move_views.xml'
     ],
 }

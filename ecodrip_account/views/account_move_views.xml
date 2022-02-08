@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="invoice_supplier_form_inherit_ecodrip" model="ir.ui.view">
+        <field name="name">account.move.form.ecodrip</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="early_payment_discount" attrs="{'invisible': [('move_type', '!=', 'in_invoice')]}"/>
+                <field name="early_payment_deadline" attrs="{'invisible': [('move_type', '!=', 'in_invoice')]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

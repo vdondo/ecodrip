@@ -14,16 +14,6 @@ class AccountMove(models.Model):
     x_apr_count = fields.Integer('# of APRs', readonly=True, compute="_compute_apr_count")
     last_apr_id = fields.Many2one('account.move', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
     x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.invoice_date_due', store=True, readonly=True, compute='_compute_last_apr_id')
-    has_invoice_id = fields.Boolean(store=True, compute='_compute_has_invoice_id')
-
-    @api.depends('x_invoice_id')
-    def _compute_has_invoice_id(self):
-        for mv in self:
-            if mv.x_invoice_id:
-                mv.has_invoice_id = True
-            else:
-                mv.has_invoice_id = False
-
 
     def _get_last_sequence(self, relaxed=False):
         """Retrieve the previous sequence.
@@ -55,7 +45,7 @@ class AccountMove(models.Model):
 
         # CUSTOM CODE
         # add to where string to ignore apr invoices
-        where_string += "AND has_invoice_id = False"
+        where_string += "AND x_invoice_id is null"
 
         query = """
             UPDATE {table} SET write_date = write_date WHERE id = (

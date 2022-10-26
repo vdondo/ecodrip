@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     'name': 'Eco-Drip: Custom Sale Account',
     'summary': 'Eco-Drip: Blocking message for sales margins / Calculate APR',
@@ -30,7 +29,7 @@ b. Button should appear in “Customer” menu in Accounting application See att
 10. The action should ignore any lock dates set for Journal entries""",
     'license': 'OEEL-1',
     'author': 'Odoo Inc',
-    'version': '0.1',
+    'version': '1.0',
     'depends': ['sale_management', 'account_accountant', 'sale_stock', 'base_automation'],
     'data': [
         'data/data.xml',

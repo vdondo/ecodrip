@@ -1,27 +1,33 @@
 [submodule "OCA/account-financial-reporting"]
 	path = OCA/account-financial-reporting
 	url = git@github.com:OCA/account-financial-reporting.git
-	branch = 12.0
+	branch = 14.0
 
 [submodule "OCA/l10n-usa"]
 	path = OCA/l10n-usa
 	url = git@github.com:OCA/l10n-usa.git
-	branch = 12.0
+	branch = 14.0
 
 [submodule "OCA/sale-workflow"]
 	path = OCA/sale-workflow
 	url = git@github.com:OCA/sale-workflow.git
-	branch = 12.0
+	branch = 14.0
 
 [submodule "OCA/account-reconcile"]
 	path = OCA/account-reconcile
 	url = git@github.com:OCA/account-reconcile.git
-	branch = 12.0
+	branch = 14.0
 
 [submodule "OCA/field-service"]
 	path = OCA/field-service
 	url = git@github.com:OCA/field-service.git
-	branch = 12.0
+	branch = 14.0
+
+[submodule "OCA/reporting-engine"]
+	path = OCA/reporting-engine
+	url = https://github.com/OCA/reporting-engine
+	branch = 14.0
+  
 [submodule "util_package"]
 	path = util_package
 	url = git@github.com:odoo-ps/util_package.git

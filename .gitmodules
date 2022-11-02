@@ -27,3 +27,7 @@
 	path = OCA/reporting-engine
 	url = https://github.com/OCA/reporting-engine
 	branch = 14.0
+  
+[submodule "util_package"]
+	path = util_package
+	url = git@github.com:odoo-ps/util_package.git

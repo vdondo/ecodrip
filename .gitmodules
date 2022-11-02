@@ -22,3 +22,6 @@
 	path = OCA/field-service
 	url = git@github.com:OCA/field-service.git
 	branch = 12.0
+[submodule "util_package"]
+	path = util_package
+	url = git@github.com:odoo-ps/util_package.git

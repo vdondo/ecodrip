@@ -16,9 +16,10 @@ class AccountMove(models.Model):
 
     def _get_last_sequence(self, relaxed=False, lock=True):
         result = super(AccountMove, self)._get_last_sequence(relaxed, lock)
-        apr_str = ['APR', '-']
-        if all(substr in result for substr in apr_str):
-            result = result.split('-')[0]
+        if result:
+            apr_str = ['APR', '-']
+            if all(substr in result for substr in apr_str):
+                result = result.split('-')[0]
         return result
     
     def _compute_apr_count(self):

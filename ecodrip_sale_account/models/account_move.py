@@ -11,8 +11,8 @@ class AccountMove(models.Model):
     x_invoice_id = fields.Many2one('account.move', ondelete='set null', string='Main Invoice', readonly=False)
     x_apr_ids = fields.One2many('account.move', 'x_invoice_id', string='Related APRs', readonly=True)
     x_apr_count = fields.Integer('# of APRs', readonly=True, compute="_compute_apr_count")
-    last_apr_id = fields.Many2one('account.move', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id', store=True)
-    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.invoice_date_due', store=True, readonly=True, compute='_compute_last_apr_id')
+    last_apr_id = fields.Many2one('account.move', ondelete='set null', string='Last APR', readonly=True, compute='_compute_last_apr_id')
+    x_last_apr_date_due = fields.Date('Last APR Date Due', related='last_apr_id.invoice_date_due', readonly=True)
 
     def _get_last_sequence(self, relaxed=False, lock=True):
         result = super(AccountMove, self)._get_last_sequence(relaxed, lock)
@@ -50,10 +50,6 @@ class AccountMove(models.Model):
                 record.last_apr_id = apr_ids.sorted(key=lambda apr: apr.invoice_date_due)[-1].id if apr_ids else record.id  
             else:
                 record.last_apr_id = False
-            if record.last_apr_id:
-                record.x_last_apr_date_due = record.last_apr_id.invoice_date_due
-            else:
-                record.x_last_apr_date_due = False
 
     # https://stackoverflow.com/questions/42950/get-last-day-of-the-month-in-python
     def last_day_of_month(self, any_day):

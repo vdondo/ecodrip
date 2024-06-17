@@ -36,7 +36,7 @@ class AccountPayment(models.Model):
             else:
                 amount_residual_str = formatLang(self.env, invoice_sign * invoice.amount_residual, currency_obj=invoice.currency_id)
 
-            if invoice.payment_state == 'in_payment' and invoice.move_type == 'in_invoice':
+            if (invoice.payment_state == 'in_payment' or invoice.payment_state == 'paid') and invoice.move_type == 'in_invoice':
                 last_payment_date = max([date for date in self.env['account.payment'].search([('reconciled_bill_ids', 'in', invoice.ids)]).mapped('date') if date], default=None)
                 if last_payment_date and invoice.early_payment_deadline and self.date == last_payment_date and self.date <= invoice.early_payment_deadline:
                     discount = invoice.early_payment_discount
